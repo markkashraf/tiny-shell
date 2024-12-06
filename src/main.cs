@@ -12,7 +12,7 @@ string? input = Console.ReadLine();
 
 Dictionary<string, int> dict = new Dictionary<string, int>();
 
-while (true)
+while (input != "exit 0")
 {
     if (!dict.ContainsKey(input))
     {
