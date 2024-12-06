@@ -10,7 +10,7 @@ using System.Diagnostics;
 IDictionary data = Environment.GetEnvironmentVariables();
 
 var path = data["PATH"];
-string[] paths = path.ToString().Split(':');
+string[]? paths = path.ToString().Split(':');
 
 
 string? input;
