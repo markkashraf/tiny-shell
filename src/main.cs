@@ -22,6 +22,12 @@ Dictionary<string, Command> dict = new Dictionary<string, Command>();
 dict["echo"] = echo;
 dict["type"] = type;
 dict["exit"] = exit;
+dict["pwd"] = pwd;
+
+string pwd(string[] s)
+{
+    return System.IO.Directory.GetCurrentDirectory();
+}
 
 while (true)
 {
@@ -31,7 +37,6 @@ while (true)
     inputArr = input.Split();
 
     if (input != null && !dict.ContainsKey(inputArr[0]))
-
     {
         try
         {
@@ -39,29 +44,23 @@ while (true)
             notePad.StartInfo.FileName = inputArr[0];
             notePad.StartInfo.Arguments = inputArr.Concatinate(1, inputArr.Length);
             notePad.Start();
-            
+            Thread.Sleep(10);
         }
 
         catch (Exception)
         {
             Console.WriteLine($"{input}: not found");
         }
+        
         continue;
+
+    }
+    else if (inputArr[0] == "exit") break;
     
-    }
-    else if (inputArr[0] == "exit")
-    {
-        //Console.WriteLine(dict[inputArr[0]](inputArr));
-        break;
-    }
-    else
-        Console.WriteLine(dict[inputArr[0]](inputArr));
+    else Console.WriteLine(dict[inputArr[0]](inputArr));
 
 
 }
-
-
-
 
 
 string exit(string[] s)
