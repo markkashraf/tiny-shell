@@ -10,9 +10,14 @@ Console.Write("$ ");
 string? input = Console.ReadLine();
 
 
-Dictionary<string,int> dict = new Dictionary<string, int>();
+Dictionary<string, int> dict = new Dictionary<string, int>();
 
-if(!dict.ContainsKey(input))
+while (true)
 {
-    Console.WriteLine($"{input}: not found");
+    if (!dict.ContainsKey(input))
+    {
+        Console.WriteLine($"{input}: not found");
+    }
+    Console.Write("$ ");
+    input = Console.ReadLine();
 }
