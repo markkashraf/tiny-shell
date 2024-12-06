@@ -4,7 +4,8 @@ using System.Net.Sockets;
 // Console.WriteLine("Logs from your program will appear here!");
 
 // Uncomment this line to pass the first stage
-// Console.Write("$ ");
+Console.Write("$ ");
 
 // Wait for user input
 Console.ReadLine();
+
