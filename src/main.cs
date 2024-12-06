@@ -7,5 +7,12 @@ using System.Net.Sockets;
 Console.Write("$ ");
 
 // Wait for user input
-Console.ReadLine();
+string? input = Console.ReadLine();
 
+
+Dictionary<string,int> dict = new Dictionary<string, int>();
+
+if(!dict.ContainsKey(input))
+{
+    Console.WriteLine($"{input}: not found");
+}
