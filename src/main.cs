@@ -2,13 +2,20 @@ using System.Net;
 using System.Net.Sockets;
 using System;
 using System.Collections;
+using System.Diagnostics;
 
-Console.Write("$ ");
 
-// Wait for user input
-string? input = Console.ReadLine();
 
-string[] inputArr = input.Split();
+
+IDictionary data = Environment.GetEnvironmentVariables();
+
+var path = data["PATH"];
+string[] paths = path.ToString().Split(':');
+
+
+string? input;
+
+string[] inputArr;
 
 Dictionary<string, Command> dict = new Dictionary<string, Command>();
 
@@ -19,9 +26,29 @@ dict["exit"] = exit;
 while (true)
 {
 
+    Console.Write("$ ");
+    input = Console.ReadLine();
+    inputArr = input.Split();
+
     if (input != null && !dict.ContainsKey(inputArr[0]))
 
-        Console.WriteLine($"{input}: not found");
+    {
+        try
+        {
+            Process notePad = new Process();
+            notePad.StartInfo.FileName = inputArr[0];
+            notePad.StartInfo.Arguments = inputArr.Concatinate(1, inputArr.Length);
+            notePad.Start();
+            
+        }
+
+        catch (Exception)
+        {
+            Console.WriteLine($"{input}: not found");
+        }
+        continue;
+    
+    }
     else if (inputArr[0] == "exit")
     {
         //Console.WriteLine(dict[inputArr[0]](inputArr));
@@ -30,10 +57,11 @@ while (true)
     else
         Console.WriteLine(dict[inputArr[0]](inputArr));
 
-    Console.Write("$ ");
-    input = Console.ReadLine();
-    inputArr = input.Split();
+
 }
+
+
+
 
 
 string exit(string[] s)
@@ -44,19 +72,13 @@ string exit(string[] s)
 string type(string[] s)
 {
     string result;
+    string command = s[1];
+
     if (dict.ContainsKey(s[1]))
     {
         result = $"{s[1]} is a shell builtin";
         return result;
     }
-
-
-    IDictionary data = Environment.GetEnvironmentVariables();
-
-    var path = data["PATH"];
-    string[] paths = path.ToString().Split(':');
-
-    string command = s[1];
 
     foreach (string p in paths)
     {
@@ -65,15 +87,14 @@ string type(string[] s)
         {
             cwdFiles = Directory.GetFiles(p);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             continue;
         }
 
         foreach (string f in cwdFiles)
         {
-            string end = "/" + command;
-            if (f.EndsWith(end))
+            if (f.EndsWith("/" + command))
             {
                 result = $"{command} is {f}";
                 return result;
@@ -102,4 +123,21 @@ string echo(string[] s)
     return result;
 }
 
+
+public static class StringExtensions
+{
+    public static string Concatinate(this string[] str, int start, int end)
+    {
+        string result = "";
+        for (int i = start; i < end; i++)
+
+        {
+            result += str[i];
+            if (i != end - 1) result += " ";
+        }
+
+
+        return result;
+    }
+}
 delegate string Command(string[] s);
