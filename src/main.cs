@@ -1,9 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
-// You can use print statements as follows for debugging, they'll be visible when running tests.
-// Console.WriteLine("Logs from your program will appear here!");
+using System;
+using System.Collections;
 
-// Uncomment this line to pass the first stage
 Console.Write("$ ");
 
 // Wait for user input
@@ -17,13 +16,13 @@ dict["echo"] = echo;
 dict["type"] = type;
 dict["exit"] = exit;
 
-
 while (true)
 {
+
     if (input != null && !dict.ContainsKey(inputArr[0]))
 
         Console.WriteLine($"{input}: not found");
-    else if(inputArr[0]=="exit")
+    else if (inputArr[0] == "exit")
     {
         //Console.WriteLine(dict[inputArr[0]](inputArr));
         break;
@@ -45,14 +44,47 @@ string exit(string[] s)
 string type(string[] s)
 {
     string result;
-
     if (dict.ContainsKey(s[1]))
-
+    {
         result = $"{s[1]} is a shell builtin";
+        return result;
+    }
 
-    else
 
-        result = $"{s[1]}: not found";
+    IDictionary data = Environment.GetEnvironmentVariables();
+
+    var path = data["PATH"];
+    string[] paths = path.ToString().Split(':');
+
+    string command = s[1];
+
+    foreach (string p in paths)
+    {
+        string[] cwdFiles;
+        try
+        {
+            cwdFiles = Directory.GetFiles(p);
+        }
+        catch (Exception e)
+        {
+            continue;
+        }
+
+        foreach (string f in cwdFiles)
+        {
+            string end = "/" + command;
+            if (f.EndsWith(end))
+            {
+                result = $"{command} is {f}";
+                return result;
+            }
+        }
+    }
+
+
+
+    result = $"{s[1]}: not found";
+
 
 
     return result;
