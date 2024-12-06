@@ -13,32 +13,59 @@ string[] inputArr = input.Split();
 
 Dictionary<string, Command> dict = new Dictionary<string, Command>();
 
-dict["echo"] = Echo;
+dict["echo"] = echo;
+dict["type"] = type;
+dict["exit"] = exit;
 
-while (input != "exit 0")
+
+while (true)
 {
-    if (input!=null && !dict.ContainsKey(inputArr[0]))
-    {
+    if (input != null && !dict.ContainsKey(inputArr[0]))
+
         Console.WriteLine($"{input}: not found");
+    else if(inputArr[0]=="exit")
+    {
+        //Console.WriteLine(dict[inputArr[0]](inputArr));
+        break;
     }
     else
-    {
         Console.WriteLine(dict[inputArr[0]](inputArr));
-    }
+
     Console.Write("$ ");
     input = Console.ReadLine();
     inputArr = input.Split();
 }
 
 
+string exit(string[] s)
+{
+    return "";
+}
 
-string Echo(string[] s){
+string type(string[] s)
+{
+    string result;
 
-    string result ="";
-    for(int i = 1; i<s.Length; i++) 
-    { 
-        result+= s[i];
-        if(i!=s.Length-1) result+=" ";
+    if (dict.ContainsKey(s[1]))
+
+        result = $"{s[1]} is a shell builtin";
+
+    else
+
+        result = $"{s[1]}: not found";
+
+
+    return result;
+}
+
+string echo(string[] s)
+{
+
+    string result = "";
+    for (int i = 1; i < s.Length; i++)
+    {
+        result += s[i];
+        if (i != s.Length - 1) result += " ";
     }
     return result;
 }
