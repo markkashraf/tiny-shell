@@ -14,7 +14,7 @@ string[]? paths = path.ToString().Split(':');
 
 
 string? input;
-
+string cwd = System.IO.Directory.GetCurrentDirectory();
 string[] inputArr;
 
 Dictionary<string, Command> dict = new Dictionary<string, Command>();
@@ -23,11 +23,9 @@ dict["echo"] = echo;
 dict["type"] = type;
 dict["exit"] = exit;
 dict["pwd"] = pwd;
+dict["cd"] = cd;
 
-string pwd(string[] s)
-{
-    return System.IO.Directory.GetCurrentDirectory();
-}
+
 
 while (true)
 {
@@ -51,14 +49,34 @@ while (true)
         {
             Console.WriteLine($"{input}: not found");
         }
-        
+
         continue;
 
     }
     else if (inputArr[0] == "exit") break;
-    
-    else Console.WriteLine(dict[inputArr[0]](inputArr));
 
+    else
+    {
+        string log = dict[inputArr[0]](inputArr);
+        if (log.Length > 0) Console.WriteLine(log);
+    }
+
+
+}
+
+string pwd(string[] s)
+{
+    return cwd;
+}
+
+string cd(string[] s)
+{
+
+    if (Directory.Exists(cwd+"/"+s[1])) cwd += "/"+s[1];
+    else if(Directory.Exists(s[1])) cwd =s[1];
+    else return $"cd: {s[1]}: No such file or directory";
+
+    return "";
 
 }
 
