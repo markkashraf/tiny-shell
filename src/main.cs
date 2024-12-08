@@ -12,7 +12,11 @@ using System.Globalization;
 IDictionary data = Environment.GetEnvironmentVariables();
 
 var PATH_DICT = data["PATH"];
+var HOME_DICT = data["HOME"];
 string[]? paths = PATH_DICT.ToString().Split(':');
+
+string[]? home = HOME_DICT.ToString().Split('/');
+
 
 
 string? input;
@@ -95,6 +99,10 @@ string cd(string[] s)
     {
         if (p == ".." && dirDq.Count > 0) dirDq.RemoveLast();
         else if (p == ".") continue;
+        else if (p == "~")
+        {
+            foreach (string x in home)  if(x!="") dirDq.AddLast(x);
+        }
         else if (p != "") dirDq.AddLast(p);
     }
 
