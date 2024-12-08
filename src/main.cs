@@ -3,19 +3,22 @@ using System.Net.Sockets;
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 
 
 
+//var x = "../../../".RemoveDotSlash();
 
 IDictionary data = Environment.GetEnvironmentVariables();
 
-var path = data["PATH"];
-string[]? paths = path.ToString().Split(':');
+var PATH_DICT = data["PATH"];
+string[]? paths = PATH_DICT.ToString().Split(':');
 
 
 string? input;
 string cwd = System.IO.Directory.GetCurrentDirectory();
 string[] inputArr;
+
 
 Dictionary<string, Command> dict = new Dictionary<string, Command>();
 
@@ -24,7 +27,6 @@ dict["type"] = type;
 dict["exit"] = exit;
 dict["pwd"] = pwd;
 dict["cd"] = cd;
-
 
 
 while (true)
@@ -71,10 +73,49 @@ string pwd(string[] s)
 
 string cd(string[] s)
 {
+    string[] dirArr = s[1].Split('/');
+    string[] cwdArr = cwd.Split('/');
+    LinkedList<string> dirDq = new LinkedList<string>();
 
-    if (Directory.Exists(cwd+"/"+s[1])) cwd += "/"+s[1];
-    else if(Directory.Exists(s[1])) cwd =s[1];
+
+    // usr/local/bin/lol/../../
+
+
+    if (dirArr[0] is ".." or ".")
+    {
+        foreach (string p in cwdArr)
+        {
+            if (p == ".." && dirDq.Count > 0) dirDq.RemoveLast();
+            else if (p == ".") continue;
+            else if (p != "") dirDq.AddLast(p);
+        }
+    }
+
+    foreach (string p in dirArr)
+    {
+        if (p == ".." && dirDq.Count > 0) dirDq.RemoveLast();
+        else if (p == ".") continue;
+        else if (p != "") dirDq.AddLast(p);
+    }
+
+
+
+    string fixedDir = "";
+
+    while (dirDq.Count > 0)
+    {
+        fixedDir += "/" + dirDq.First.Value;
+        dirDq.RemoveFirst();
+    }
+
+
+    if (Directory.Exists(cwd + "/" + fixedDir)) cwd += "/" + s[1];
+    else if (Directory.Exists(fixedDir)) cwd = fixedDir;
     else return $"cd: {s[1]}: No such file or directory";
+
+
+
+
 
     return "";
 
@@ -156,5 +197,6 @@ public static class StringExtensions
 
         return result;
     }
+
 }
 delegate string Command(string[] s);
