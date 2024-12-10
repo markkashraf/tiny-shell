@@ -6,7 +6,7 @@ using StringExtensions;
 string input;
 string[] inputArr;
 
-
+// test
 while (true)
 {
     Console.Write("$ ");
